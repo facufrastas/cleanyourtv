@@ -23,13 +23,25 @@ public class InputKeyService extends AccessibilityService {
     private int[] inputKeycodes = new int[0];
     private Map<Integer, String> appKeys = Collections.emptyMap();
 
+    private final DirectBoot.Unlock unlock = new DirectBoot.Unlock(this::loadConfig);
+
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        // From config.xml or a theme's config.json; theme.sh rebinds this service after a push.
+        unlock.whenUnlocked(this);
+    }
+
+    /** From config.xml or a theme's config.json; theme.sh rebinds this service after a push. */
+    private void loadConfig() {
         Config config = Config.load(this);
         inputKeycodes = config.inputKeycodes;
         appKeys = RemoteKeys.parseAppKeys(config.appKeys);
+    }
+
+    @Override
+    public void onDestroy() {
+        unlock.cancel(this);
+        super.onDestroy();
     }
 
     private boolean isInputKey(int keyCode) {

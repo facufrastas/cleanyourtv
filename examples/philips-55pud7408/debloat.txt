@@ -1,0 +1,74 @@
+# Philips 55PUD7408/77 (Latin America), Google TV 14 (API 34), build UTT1.250308.001, patch 2026-03-05
+# Built by TPV (ro.product.manufacturer=TPV, ro.product.model="Philips Google TV TA7",
+# device PH3M_AL_T32), MediaTek m7332, armeabi-v7a, about 1.9 GB RAM, 4K panel with a 1080p UI.
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/philips-55pud7408/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/philips-55pud7408/debloat.txt com.google.android.apps.tv.launcherx
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.apps.tv.launcherx (pass it to restore.sh / as STOCK_LAUNCHER).
+# Home claimants: launcherx (priority 2), setupwraith (1), com.spocky.projengmenu (0, user-installed
+# Projectivy), com.android.tv.settings FallbackHome (-1000).
+# Live TV app: com.mediatek.wwtv.tvcenter (LiveTVPhilips). Inputs: com.mediatek.tvinput.
+# Disabled from the factory, so not listed (restore.sh would turn them ON): com.android.printspooler,
+# com.android.tv.feedbackconsent, com.google.android.feedback, com.google.android.play.games,
+# com.google.android.syncadapters.calendar, com.google.android.marvin.talkback.
+#
+# Applied in small batches on 2026-10-20 with a screenshot after each, then the launcher installed.
+# Checked the same day: Home, dock, grid and top-bar navigation, Inputs > HDMI 1 and Live TV, YouTube
+# with AdGuard Private DNS on, and every remote button pressed by the owner. Not yet lived with for days.
+#
+# Quirks on this firmware, all checked on the TV:
+# - USB debugging + Network debugging opened port 5555 directly; the stock adb binary worked on macOS.
+# - `screencap -p` prints "Init wrapper sys mutex successful" on stdout, so `adb exec-out screencap -p`
+#   gives a corrupt PNG. Write to /sdcard and pull it. Live TV and HDMI screenshots are 0 bytes.
+# - The Wi-Fi network saved during first setup belonged to setupwraith (cuid 10053). Forgetting it and
+#   re-joining in Settings moved it to android.uid.system; only then was setupwraith disabled.
+# - The remote's Settings (gear) button is scancode 357 (KEY_OPTION) with Android keycode 0, which only
+#   launcherx answered. Launcher config: settings_key_scancodes = 357, installed with HOME_KEY_SERVICE=1.
+#   Netflix, YouTube, Input, mic and Home keep working without the stock launcher.
+# - At boot, system_server cleared enabled_accessibility_services of the helper ("Ignoring
+#   non-encryption-aware service", then pkg:android writes null), so the Settings button died after
+#   every restart. The launcher's helpers are now directBootAware; the setting survived a reboot after that.
+# - org.droidtv.eum (the "Help" e-manual tile) is hidden in the launcher, not disabled (see philips-50pus8517).
+# - Projectivy Launcher was installed and took Home through its accessibility service; it is disabled here.
+#
+# Kept on purpose: org.droidtv (TPVTvService), org.droidtv.ambisvc, org.droidtv.icp,
+# org.droidtv.consentcmpapp, com.mstar.android.tv.disclaimercustomization (purpose unclear or legal
+# consent screens), com.mediatek.autopair and com.easy.oad (remote pairing and remote firmware),
+# com.mediatek.tv.service, com.mediatek.tvinput, com.mediatek.wwtv.tvcenter, com.mediatek.wwtv.setupwizard
+# (Live TV and inputs), com.mediatek.wwtv.mediaplayer (USB media), com.mediatek.tv.factory and
+# mediatek.factorymenu.ui (factory menu), keyboards, Play Store, Play Services.
+# Kept by owner's choice: Assistant (katniss + com.google.android.tv.assistant LED service), Chromecast
+# (mediashell), firmware updates (com.android.tv.ota), ambient screensaver (dreamx), Netflix, YouTube,
+# YouTube Music and every app the owner installed.
+
+# Telemetry
+org.droidtv.candeebug                        # TP Vision "DAC" analytics uploader (CollectionService)
+org.droidtv.gel                              # TP Vision metrics gathering, runs with candeebug
+
+# Android ad and personalisation services
+com.android.adservices.api
+com.android.ondevicepersonalization.services
+com.android.federatedcompute.services
+
+# Manufacturer content
+com.mediatek.android.leanbacklauncher.partnercustomizer # partner config that injects rows into the home screen
+fusion.android.tv.demo                       # retail store demo (RetailDisplayPhilips)
+com.mediatek.opapp                           # European satellite operator portals (Canal Digitaal, Skylink...)
+
+# Not needed on a TV
+com.android.healthconnect.controller
+com.android.health.connect.backuprestore
+
+# Preloaded streaming apps, by owner's choice
+com.amazon.amazonvideo.livingroom            # Prime Video
+com.google.android.videos                    # Google TV (Play Movies) store
+
+# Stock home. Disable only after the new launcher is installed and set as home.
+# WARNING: the Wi-Fi network saved during first setup belongs to setupwraith, and Android DELETES it the
+# moment setupwraith is disabled. Check first: `dumpsys wifi | grep -o 'cname=[^ ]*'`. If it is not
+# android.uid.system, forget the network and re-join it in Settings > Network BEFORE disabling this.
+com.spocky.projengmenu                       # Projectivy, user-installed third-party launcher
+com.google.android.tungsten.setupwraith      # its RecoveryActivity otherwise takes over Home
+com.google.android.apps.tv.launcherx

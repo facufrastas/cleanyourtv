@@ -27,15 +27,27 @@ public class HomeKeyService extends AccessibilityService {
     /** app_keys, the same map InputKeyService reads, for setups that run only this service. */
     private Map<Integer, String> appKeys = Collections.emptyMap();
 
+    private final DirectBoot.Unlock unlock = new DirectBoot.Unlock(this::loadConfig);
+
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
         settingsScancodes = getResources().getIntArray(R.array.settings_key_scancodes);
-        // Keycodes and the panel choice can also come from a theme; theme.sh restarts this service.
+        unlock.whenUnlocked(this);
+    }
+
+    /** Keycodes and the panel choice can also come from a theme; theme.sh restarts this service. */
+    private void loadConfig() {
         Config config = Config.load(this);
         settingsKeycodes = config.settingsKeycodes;
         settingsPanel = config.settingsKeyPanel;
         appKeys = RemoteKeys.parseAppKeys(config.appKeys);
+    }
+
+    @Override
+    public void onDestroy() {
+        unlock.cancel(this);
+        super.onDestroy();
     }
 
     private boolean isSettingsKey(KeyEvent event) {

@@ -1,0 +1,29 @@
+{
+  "created": "2026-10-20T18:31:34-0300",
+  "home": "com.google.android.apps.tv.launcherx/.home.HomeActivity",
+  "host": "192.168.1.84",
+  "list": "/Users/facu/dev/General/cleanyourtv/examples/philips-55pud7408/debloat.txt",
+  "packages": {
+    "com.amazon.amazonvideo.livingroom": "enabled",
+    "com.android.adservices.api": "enabled",
+    "com.android.federatedcompute.services": "enabled",
+    "com.android.health.connect.backuprestore": "enabled",
+    "com.android.healthconnect.controller": "enabled",
+    "com.android.ondevicepersonalization.services": "enabled",
+    "com.google.android.apps.tv.launcherx": "enabled",
+    "com.google.android.tungsten.setupwraith": "enabled",
+    "com.google.android.videos": "enabled",
+    "com.mediatek.android.leanbacklauncher.partnercustomizer": "enabled",
+    "com.mediatek.opapp": "enabled",
+    "com.spocky.projengmenu": "enabled",
+    "fusion.android.tv.demo": "enabled",
+    "org.droidtv.candeebug": "enabled",
+    "org.droidtv.gel": "enabled"
+  },
+  "settings": {
+    "animator_duration_scale": "0.0",
+    "transition_animation_scale": "0.0",
+    "window_animation_scale": "0.0"
+  },
+  "version": 1
+}
